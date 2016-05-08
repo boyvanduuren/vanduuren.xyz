@@ -4,7 +4,7 @@ permalink: about/
 profile: true
 ---
 
-So, short bio. I'm Boy van Duuren from [The Hague][the_hague] in the Netherlands. Interested programming, automation and IT-infrastructure, in no particular order.
+So, short bio. I'm Boy van Duuren from [The Hague][the_hague] in the Netherlands. Interested in programming, automation and IT-infrastructure, in no particular order.
 
 Currently a bachelor student at the Open University which allows me to study next to my full-time job at [RAAF Technology][raaf] as a developer/{linux,infra}-consultant.
 
