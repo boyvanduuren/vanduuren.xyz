@@ -1,0 +1,42 @@
+name: vanduuren.xyz
+description: Programming, automation, infrastructure.
+meta_description: "Programming, automation, infrastructure."
+
+aboutPage: true
+
+markdown: redcarpet
+highlighter: pygments
+gems: [jekyll-paginate]
+
+paginate: 20
+baseurl: /
+domain_name: 'https://vanduuren.xyz'
+google_analytics: 'UA-XXXXXXXX-X'
+disqus: false
+disqus_shortname: 'your-disqus-shortname'
+
+# Details for the RSS feed generator
+url:            'https://vanduuren.xyz'
+author:         'Boy van Duuren'
+
+permalink:       /:year/:title/
+
+defaults:
+    -
+        scope:
+            path: "" # empty string for all files
+            type: pages
+        values:
+            layout: default
+    -
+        scope:
+            path: "" # empty string for all files
+            type: posts
+        values:
+            layout: post
+    -
+        scope:
+            path: ""
+            type: drafts
+        values:
+            layout: post
