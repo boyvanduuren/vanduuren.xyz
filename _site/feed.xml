@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>vanduuren.xyz</title>
+    <description>Programming, automation, infrastructure.</description>
+    <link>https://vanduuren.xyz</link>
+    <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
+    
+      <item>
+        <title>Initial commit... errr, post.</title>
+        
+        
+          <description>&lt;p&gt;So I&amp;#39;ve been playing around with some &lt;a href=&quot;https://www.hashicorp.com/&quot;&gt;HashiCorp&lt;/a&gt; software the last week, namely &lt;a href=&quot;https://www.nomadproject.io/&quot;&gt;Nomad&lt;/a&gt; and &lt;a href=&quot;https://www.consul.io/&quot;&gt;Consul&lt;/a&gt;, and I started reading Sébastien Goasguen&amp;#39;s &lt;a href=&quot;http://shop.oreilly.com/product/0636920036791.do&quot;&gt;Docker Cookbook&lt;/a&gt; to learn more about Docker. Kinda late to the docker party, I know.&lt;/p&gt;
+</description>
+        
+        <pubDate>Sun, 08 May 2016 19:06:02 +0200</pubDate>
+        <link>https://vanduuren.xyz/2016/initial-commit-err-post/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2016/initial-commit-err-post/</guid>
+      </item>
+    
+  </channel>
+</rss>
