@@ -37,6 +37,8 @@ docker run -d   \
     boyvanduuren/docker-jekyll
 ```
 
+Replace the environment variables by your own, of course.
+
 There are a few things I might add in the future, like toggling SSL on/off, but for my use-case
 that's not really important.
 
