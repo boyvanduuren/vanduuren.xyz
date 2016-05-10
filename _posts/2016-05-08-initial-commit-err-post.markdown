@@ -1,5 +1,5 @@
 ---
-title:  "Initial commit... errr, post."
+title:  "Initial commit... errr, post"
 date:   2016-05-08 19:06:02+02:00
 description: Initial post
 ---
