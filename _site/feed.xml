@@ -7,6 +7,21 @@
     <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Automating my Jekyll updates</title>
+        
+        
+          <description>&lt;p&gt;Like most other people I know, I don&amp;#39;t like doing stuff by hand. So when I had to rebuild and reupload
+this website twice two days ago because of some small errors, I got cranky.
+There are a lot of nice docker images that serve Jekyll sites, like &lt;a href=&quot;https://hub.docker.com/r/jekyll/jekyll/&quot;&gt;jekyll/jekyll&lt;/a&gt;, but
+none of them seemed to be run on ARM. So no Raspberry PI :(.&lt;/p&gt;
+</description>
+        
+        <pubDate>Tue, 10 May 2016 17:55:05 +0200</pubDate>
+        <link>https://vanduuren.xyz/2016/automating-jekyll-updates/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2016/automating-jekyll-updates/</guid>
+      </item>
+    
+      <item>
         <title>Initial commit... errr, post</title>
         
         
