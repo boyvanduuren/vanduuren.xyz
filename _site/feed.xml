@@ -7,6 +7,18 @@
     <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Population count exercise in GOPL</title>
+        
+        
+          <description>&lt;script src=&#39;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;&gt;&lt;/script&gt;
+</description>
+        
+        <pubDate>Sun, 22 May 2016 10:32:13 +0200</pubDate>
+        <link>https://vanduuren.xyz/2016/golang-popcount/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2016/golang-popcount/</guid>
+      </item>
+    
+      <item>
         <title>Automating my Jekyll updates</title>
         
         

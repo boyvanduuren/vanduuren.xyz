@@ -293,6 +293,16 @@ hr {
 
 span.code { font-family:Menlo, Monaco, Courier; background-color:#EEE; font-size:14px; }
 
+code {
+  overflow-x: auto;
+  font-family:'Source Code Pro',Menlo,monospace;
+  font-size: 13px;
+  /*padding: 0.5em;*/
+  background: #eee;
+  -webkit-text-size-adjust: none;
+}
+
+
 pre	{
 	font-family:Menlo, Monaco, Courier;
 	white-space:pre-wrap;
