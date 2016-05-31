@@ -23,8 +23,8 @@ When all this is done, we're ready to start.
 What we'll be doing is following the [nomad getting started][4] guide with a few changes that
 will lead to a cluster running two nomad servers and four nomad clients spanning
 two EC2 regions.
-This requires some (minimal) setup. We'll need to create [security groups][5] and [elastic IP addresses][6] so the two
-instances can reach each other, and then create the instances.
+This requires some (minimal) setup. We'll need to create [elastic IP addresses][6] and [security groups][5]
+so the two instances can reach each other, and then create the instances.
 After all that has been setup we'll configure the instances.
 
 ## choosing your regions
@@ -38,10 +38,63 @@ you'll have to send an email to [Amazon Web Services](mailto:aws-verification@am
 The choice you make doesn't matter for the most part. The only difference will be different
 ID's for the [Amazon Machine Images][7] we'll be using to run on our instances.
 
+## creating the elastic IP addresses
+
+We'll start by creating the elastic IP addresses, these are needed when we create the security groups.
+The `aws ec2 allocate-address` command will be of use here. One IP will be allocated per region.
+
+```bash
+$ aws ec2 allocate-address \
+    --domain vpc \
+    --region eu-west-1
+
+          {
+              "PublicIp": "203.0.113.10",
+              "Domain": "vpc",
+              "AllocationId": "eipalloc-64d5890a"
+          }
+
+$ # we're interested in the AllocationId and
+$ # the PublicIp, so we'll save it in a variable
+$ ALLOCID_WEST="eipalloc-64d5890a"
+$ PUBLICIP_WEST="203.0.113.10"
+
+$ # we'll do the same for the second region
+$ aws ec2 allocate-address \
+    --domain vpc \
+    --region eu-central-1
+
+          {
+              "PublicIp": "203.0.113.6",
+              "Domain": "vpc",
+              "AllocationId": "eipalloc-1a90338f"
+          }
+
+$ ALLOCID_CENTRAL="eipalloc-1a90338f"
+$ PUBLICIP_WEST="203.0.113.6"
+
+```
+
+We now have all the information for the next step...
 
 ## creating the security groups
 
+The security groups will be very simple. SSH access will be allowed from our own IP address
+so we can remotely access both machines. 
+On top of that, all traffic between the two elastic IP addresses will be allowed. That way
+the nomad agents can talk to each other, and we can connect to our test jobs (which will be redis containers).
 
+The commands we'll be using are `aws ec2 create-security-group` and `aws ec2 authorize-security-group-ingress`.
+
+```bash
+$ aws ec2 create-security-group \
+    --group-name nomad-dev \
+    --region eu-west-1
+    
+$ aws ec2 create-security-group \
+    --group-name nomad-dev
+    --region eu-central-1
+```
 
 
 [1]:    https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-set-up.html
