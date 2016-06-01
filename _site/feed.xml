@@ -7,6 +7,19 @@
     <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>A nomad cluster between two AWS EC2 regions</title>
+        
+        
+          <description>&lt;p&gt;In this article we&amp;#39;ll set up a small Nomad cluster spanning two different Amazon
+EC2 regions.&lt;/p&gt;
+</description>
+        
+        <pubDate>Wed, 01 Jun 2016 22:34:24 +0200</pubDate>
+        <link>https://vanduuren.xyz/2016/setting-up-nomad-in-aws/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2016/setting-up-nomad-in-aws/</guid>
+      </item>
+    
+      <item>
         <title>Population count exercise in GOPL</title>
         
         
