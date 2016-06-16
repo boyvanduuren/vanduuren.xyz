@@ -7,6 +7,11 @@ description: Setting up a small nomad cluster
 In this article we'll set up a small Nomad cluster spanning two different Amazon
 EC2 regions.
 
+<font color='red'>IMPORTANT:</font>
+The resulting cluster is just something fun to experiment with. Don't run
+production on it. Also, you could just use [Availability Zones][az] in stead
+of two different regions.
+
 # prerequisites
 
 There will be a few things we need before we can start:
@@ -411,3 +416,4 @@ stuff we can do with that.
 [5]:    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html
 [6]:    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html
 [7]:    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html
+[az]:   https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions
