@@ -14,7 +14,7 @@
 the encoding format it uses by default, which is &lt;a href=&quot;https://golang.org/pkg/encoding/gob/&quot;&gt;gob&lt;/a&gt;.
 Then I found out there was no Java implementation for it. Which is a shame, because there are a few
 Go programs that might be nice to interface with from the software we&amp;#39;re building at work.
-However, at work we use Java, and apparently there are no gob implementations for Java yet.&lt;/p&gt;
+However, at work we use Java.&lt;/p&gt;
 </description>
         
         <pubDate>Sat, 16 Jul 2016 17:10:41 +0200</pubDate>

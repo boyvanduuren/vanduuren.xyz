@@ -8,7 +8,7 @@ A while ago while working with Terraform, I started reading up on Go's [RPC][go_
 the encoding format it uses by default, which is [gob][go_gob].
 Then I found out there was no Java implementation for it. Which is a shame, because there are a few
 Go programs that might be nice to interface with from the software we're building at work.
-However, at work we use Java, and apparently there are no gob implementations for Java yet.
+However, at work we use Java.
 
 So I started working on an implementation, called [jgobs][jgobs]. If you can think of a better
 name, please let me know.. this one isn't very original.  Anyway, I'm not even sure this is going
