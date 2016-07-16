@@ -7,6 +7,22 @@
     <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
+        <title>Serializing Java objects using Golang&#39;s gob encoding</title>
+        
+        
+          <description>&lt;p&gt;A while ago while working with Terraform, I started reading up on Go&amp;#39;s &lt;a href=&quot;https://golang.org/pkg/net/rpc/&quot;&gt;RPC&lt;/a&gt; library, and
+the encoding format it uses by default, which is &lt;a href=&quot;https://golang.org/pkg/encoding/gob/&quot;&gt;gob&lt;/a&gt;.
+Then I found out there was no Java implementation for it. Which is a shame, because there are a few
+Go programs that might be nice to interface with from the software we&amp;#39;re building at work.
+However, at work we use Java, and apparently there are no gob implementations for Java yet.&lt;/p&gt;
+</description>
+        
+        <pubDate>Sat, 16 Jul 2016 17:10:41 +0200</pubDate>
+        <link>https://vanduuren.xyz/2016/java-object-serialization-to-go/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2016/java-object-serialization-to-go/</guid>
+      </item>
+    
+      <item>
         <title>A nomad cluster between two AWS EC2 regions</title>
         
         

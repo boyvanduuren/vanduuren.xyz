@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>vanduuren.xyz - Serializing Java objects using Golang's gob encoding</title>
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="My Blog" href="/rss.xml">
+  <link rel="stylesheet" href="/assets/css/highlight.css">
+</head>
+<body>
+
+  <nav class="main-nav">
+    
+        <a href="/"> <span class="arrow">←</span> Home </a>
+    
+
+    
+        
+            <a href="/about">About </a>
+        
+    
+    <a class="cta" href="/feed.xml">Subscribe</a>
+</nav>
+
+  
+
+  <section id="wrapper" class="">
+    <article class="post">
+    <header>
+        <h1>Serializing Java objects using Golang's gob encoding</h1>
+        <h2 class="headline">July 16, 2016</h2>
+    </header>
+    <section id="post-body">
+        <p>A while ago while working with Terraform, I started reading up on Go&#39;s <a href="https://golang.org/pkg/net/rpc/">RPC</a> library, and
+the encoding format it uses by default, which is <a href="https://golang.org/pkg/encoding/gob/">gob</a>.
+Then I found out there was no Java implementation for it. Which is a shame, because there are a few
+Go programs that might be nice to interface with from the software we&#39;re building at work.
+However, at work we use Java, and apparently there are no gob implementations for Java yet.</p>
+
+<p>So I started working on an implementation, called <a href="https://github.com/boyvanduuren/jgobs">jgobs</a>. If you can think of a better
+name, please let me know.. this one isn&#39;t very original.  Anyway, I&#39;m not even sure this is going
+to be useful to us, let alone anyone else, but hey, it&#39;s a nice exercise.</p>
+
+<p>Last week jgobs was able to serialize a simple (primitive fields only) object to a byte array
+which was deserialized by Go&#39;s gob library.
+This morning jgobs succesfully serialized an object that contains nested objects, which I think
+is pretty cool, so time for a small demo!</p>
+
+<p>What we&#39;ll do is serialize a simple <code>Person</code> object that has a name and an <code>Address</code> object
+associated with it. Then we&#39;ll deserialize it using Go.</p>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// Address.java</span>
+<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Address</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">streetName</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="n">houseNumber</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">city</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// Person.java</span>
+<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="n">Address</span> <span class="n">address</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// App.java</span>
+<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">xyz.vanduuren.jgobs.lib.Encoder</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.FileOutputStream</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span>
+<span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="c1">// Encode to a file</span>
+        <span class="n">FileOutputStream</span> <span class="n">fileOutputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">FileOutputStream</span><span class="o">(</span><span class="s">&quot;/tmp/gob_person.data&quot;</span><span class="o">);</span>
+        <span class="c1">// Create the encoder with the file outputstream</span>
+        <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Encoder</span><span class="o">(</span><span class="n">fileOutputStream</span><span class="o">);</span>
+
+        <span class="c1">// Create the person and address objects we want to encode</span>
+        <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Person</span><span class="o">();</span>
+        <span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Address</span><span class="o">();</span>
+
+        <span class="c1">// Give them some data</span>
+        <span class="n">address</span><span class="o">.</span><span class="na">streetName</span> <span class="o">=</span> <span class="s">&quot;Kerksteeg&quot;</span><span class="o">;</span>
+        <span class="n">address</span><span class="o">.</span><span class="na">city</span> <span class="o">=</span> <span class="s">&quot;Leiden&quot;</span><span class="o">;</span>
+        <span class="n">address</span><span class="o">.</span><span class="na">houseNumber</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="n">person</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="s">&quot;Jan Klaassen&quot;</span><span class="o">;</span>
+        <span class="n">person</span><span class="o">.</span><span class="na">address</span> <span class="o">=</span> <span class="n">address</span><span class="o">;</span>
+
+        <span class="c1">// Encode, and close the stream</span>
+        <span class="n">encoder</span><span class="o">.</span><span class="na">encode</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+        <span class="n">fileOutputStream</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+<p>Running the above program will result in a <code>Person</code> named Jan Klaassen that will
+be serialized to <code>/tmp/gob_person.data</code>.
+We should be able to decode that with a simple Go program. Let&#39;s try.</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// decode.go</span>
+<span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;encoding/gob&quot;</span>
+    <span class="s">&quot;fmt&quot;</span>
+    <span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">type</span> <span class="nx">Address</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">StreetName</span>  <span class="kt">string</span>
+    <span class="nx">HouseNumber</span> <span class="kt">int8</span>
+    <span class="nx">City</span>        <span class="kt">string</span>
+    <span class="p">}</span>
+
+    <span class="kd">type</span> <span class="nx">Person</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">Name</span>    <span class="kt">string</span>
+    <span class="nx">Address</span> <span class="nx">Address</span>
+    <span class="p">}</span>
+
+    <span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&quot;/tmp/gob_person.data&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;open: %v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">dec</span> <span class="o">:=</span> <span class="nx">gob</span><span class="p">.</span><span class="nx">NewDecoder</span><span class="p">(</span><span class="nx">f</span><span class="p">)</span>
+    <span class="kd">var</span> <span class="nx">person</span> <span class="nx">Person</span>
+    <span class="nx">err</span> <span class="p">=</span> <span class="nx">dec</span><span class="p">.</span><span class="nx">Decode</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">person</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;decode: %v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+    <span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;decoded person: %v\n&quot;</span><span class="p">,</span> <span class="nx">person</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Let&#39;s compile and run it.</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>go build decode.go <span class="o">&amp;&amp;</span> ./decode
+
+decoded person: <span class="o">{</span>Jan Klaassen <span class="o">{</span>Kerksteeg <span class="m">1</span> Leiden<span class="o">}}</span>
+</code></pre></div>
+<p>And it worked!
+There&#39;s still a lot more stuff to do for the encoder, and then I need to start
+work on the decoder. But I thought this was already pretty cool! 😄</p>
+
+    </section>
+</article>
+<footer id="post-meta" class="clearfix">
+    <a href="http://twitter.com/">
+        <img class="avatar" src="/assets/images/avatar.png">
+        <div>
+            <span class="dark">Boy van Duuren</span>
+            <span>Programming, automation, infrastructure.</span>
+        </div>
+    </a>
+
+    <section id="sharing">
+        <a class="twitter" href="https://twitter.com/intent/tweet?text=https://vanduuren.xyz/2016/java-object-serialization-to-go/ - Serializing Java objects using Golang's gob encoding by @"><span class="icon-twitter"> Tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+    </section>
+</footer>
+
+<!-- Disqus comments -->
+
+
+<!-- Archive post list -->
+
+
+
+
+
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-78233041-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+</body>
+</html>
+
+
+
