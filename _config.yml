@@ -40,3 +40,7 @@ defaults:
             type: drafts
         values:
             layout: post
+
+exclude:
+    - Gemfile
+    - Gemfile.lock
