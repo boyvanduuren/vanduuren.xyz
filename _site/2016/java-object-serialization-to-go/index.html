@@ -52,23 +52,23 @@ is pretty cool, so time for a small demo!</p>
 
 <p>What we&#39;ll do is serialize a simple <code>Person</code> object that has a name and an <code>Address</code> object
 associated with it. Then we&#39;ll deserialize it using Go.</p>
-<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// Address.java</span>
-<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="c1">// Address.java</span>
+<span class="kn">package</span> <span class="nn">xyz.vanduuren.jgobs.demo</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Address</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="n">String</span> <span class="n">streetName</span><span class="o">;</span>
     <span class="kd">public</span> <span class="kt">int</span> <span class="n">houseNumber</span><span class="o">;</span>
     <span class="kd">public</span> <span class="n">String</span> <span class="n">city</span><span class="o">;</span>
 <span class="o">}</span>
-</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// Person.java</span>
-<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="c1">// Person.java</span>
+<span class="kn">package</span> <span class="nn">xyz.vanduuren.jgobs.demo</span><span class="o">;</span>
 
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
     <span class="kd">public</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
     <span class="kd">public</span> <span class="n">Address</span> <span class="n">address</span><span class="o">;</span>
 <span class="o">}</span>
-</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span class="c1">// App.java</span>
-<span class="kn">package</span> <span class="n">xyz</span><span class="o">.</span><span class="na">vanduuren</span><span class="o">.</span><span class="na">jgobs</span><span class="o">.</span><span class="na">demo</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-java" data-lang="java"><span></span><span class="c1">// App.java</span>
+<span class="kn">package</span> <span class="nn">xyz.vanduuren.jgobs.demo</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">xyz.vanduuren.jgobs.lib.Encoder</span><span class="o">;</span>
 
@@ -79,13 +79,13 @@ associated with it. Then we&#39;ll deserialize it using Go.</p>
 <span class="o">{</span>
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
         <span class="c1">// Encode to a file</span>
-        <span class="n">FileOutputStream</span> <span class="n">fileOutputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">FileOutputStream</span><span class="o">(</span><span class="s">&quot;/tmp/gob_person.data&quot;</span><span class="o">);</span>
+        <span class="n">FileOutputStream</span> <span class="n">fileOutputStream</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FileOutputStream</span><span class="o">(</span><span class="s">&quot;/tmp/gob_person.data&quot;</span><span class="o">);</span>
         <span class="c1">// Create the encoder with the file outputstream</span>
-        <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Encoder</span><span class="o">(</span><span class="n">fileOutputStream</span><span class="o">);</span>
+        <span class="n">Encoder</span> <span class="n">encoder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Encoder</span><span class="o">(</span><span class="n">fileOutputStream</span><span class="o">);</span>
 
         <span class="c1">// Create the person and address objects we want to encode</span>
-        <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Person</span><span class="o">();</span>
-        <span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">Address</span><span class="o">();</span>
+        <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">();</span>
+        <span class="n">Address</span> <span class="n">address</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Address</span><span class="o">();</span>
 
         <span class="c1">// Give them some data</span>
         <span class="n">address</span><span class="o">.</span><span class="na">streetName</span> <span class="o">=</span> <span class="s">&quot;Kerksteeg&quot;</span><span class="o">;</span>
@@ -103,7 +103,7 @@ associated with it. Then we&#39;ll deserialize it using Go.</p>
 <p>Running the above program will result in a <code>Person</code> named Jan Klaassen that will
 be serialized to <code>/tmp/gob_person.data</code>.
 We should be able to decode that with a simple Go program. Let&#39;s try.</p>
-<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// decode.go</span>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="c1">// decode.go</span>
 <span class="kn">package</span> <span class="nx">main</span>
 
 <span class="kn">import</span> <span class="p">(</span>
@@ -142,7 +142,7 @@ We should be able to decode that with a simple Go program. Let&#39;s try.</p>
 <span class="p">}</span>
 </code></pre></div>
 <p>Let&#39;s compile and run it.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>go build decode.go <span class="o">&amp;&amp;</span> ./decode
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ go build decode.go <span class="o">&amp;&amp;</span> ./decode
 
 decoded person: <span class="o">{</span>Jan Klaassen <span class="o">{</span>Kerksteeg <span class="m">1</span> Leiden<span class="o">}}</span>
 </code></pre></div>

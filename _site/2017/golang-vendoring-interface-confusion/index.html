@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>vanduuren.xyz - Golang: Vendoring and Interface Confusion</title>
+  <link rel="shortcut icon" href="/assets/images/favicon.ico">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="My Blog" href="/rss.xml">
+  <link rel="stylesheet" href="/assets/css/highlight.css">
+</head>
+<body>
+
+  <nav class="main-nav">
+    
+        <a href="/"> <span class="arrow">←</span> Home </a>
+    
+
+    
+        
+            <a href="/about">About </a>
+        
+    
+    <a class="cta" href="/feed.xml">Subscribe</a>
+</nav>
+
+  
+
+  <section id="wrapper" class="">
+    <article class="post">
+    <header>
+        <h1>Golang: Vendoring and Interface Confusion</h1>
+        <h2 class="headline">February 12, 2017</h2>
+    </header>
+    <section id="post-body">
+        <p>The last few days I have been working on a small tool that enables you to easily
+run tests against your code hosted on Github on your own machines.  The thing
+is, there are tons of tools and providers that allow you to do this, but they&#39;ll
+start costing money as soon as you want to use them on private repositories.</p>
+
+<p>So, inspired by Gitlab&#39;s excellent <a href="https://gitlab.com/gitlab-org/gitlab-ci-multi-runner">gitlab-runner</a>, I started
+working on <a href="https://github.com/boyvanduuren/octorunner">octorunner</a>, a tool that implements a few of the
+features gitlab-runner has, like running tests on private repositories in
+ephemeral docker containers, triggered by push events from Github.  As a bonus
+this was a nice chance to do a project in Go.</p>
+
+<p>Anyway, after getting to a point where octorunner actually did something
+useful, I wanted to add some tests to octorunner.  This is where a bit of
+headache started. See, I use the <a href="https://github.com/docker/docker/tree/master/client">Docker client API</a> and they
+vendor (all?) their external dependencies.</p>
+
+<p>I had not come across vendoring in Go before, but since Go 1.5 - although
+experimental - it supports vendoring. It was enabled by default in 1.6.
+What happens when importing external packages into your project is that the
+compiler will first search for a package in your project&#39;s <code>vendor</code>
+directory, only after that will it search in <code>$GOPATH/src</code>.</p>
+
+<p>Because the Docker client library vendored the <code>context</code> package - among others
+- I ran into issues when I wanted to define an interface that the Docker client
+was an implementation of.  The exact compilation error I ran into was as
+follows:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="nx">ImageExists</span><span class="p">:</span> <span class="o">*</span><span class="nx">client</span><span class="p">.</span><span class="nx">Client</span> <span class="nx">does</span> <span class="nx">not</span> <span class="nx">implement</span> <span class="nx">ImageLister</span> <span class="p">(</span><span class="nx">wrong</span> <span class="kd">type</span> <span class="k">for</span>
+<span class="nx">ImageList</span> <span class="nx">method</span><span class="p">)</span> <span class="nx">have</span>
+<span class="nx">ImageList</span><span class="p">(</span><span class="s">&quot;github.com/docker/docker/vendor/golang.org/x/net/context&quot;</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span>
+<span class="nx">types</span><span class="p">.</span><span class="nx">ImageListOptions</span><span class="p">)</span> <span class="p">([]</span><span class="nx">types</span><span class="p">.</span><span class="nx">ImageSummary</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="nx">want</span>
+<span class="nx">ImageList</span><span class="p">(</span><span class="s">&quot;context&quot;</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">types</span><span class="p">.</span><span class="nx">ImageListOptions</span><span class="p">)</span> <span class="p">([]</span><span class="nx">types</span><span class="p">.</span><span class="nx">ImageSummary</span><span class="p">,</span>
+<span class="kt">error</span><span class="p">)</span>
+</code></pre></div>
+<p>So what&#39;s happening here exactly?
+Let&#39;s take a look at a bit of code that reproduces this exact error:</p>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+    <span class="s">&quot;golang.org/x/net/context&quot;</span>
+    <span class="s">&quot;github.com/docker/docker/api/types&quot;</span>
+    <span class="s">&quot;github.com/docker/docker/client&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span> <span class="nx">ImageLister</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">ImageList</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">options</span> <span class="nx">types</span><span class="p">.</span><span class="nx">ImageListOptions</span><span class="p">)</span> <span class="p">([]</span><span class="nx">types</span><span class="p">.</span><span class="nx">ImageSummary</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">cli</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nx">NewEnvClient</span><span class="p">()</span>
+    <span class="nx">ImageExists</span><span class="p">(</span><span class="nx">cli</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">ImageExists</span><span class="p">(</span><span class="nx">lister</span> <span class="nx">ImageLister</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>In the above example we&#39;re defining an <code>ImageLister</code> interface containing a
+single method. The argument causing the issue is <code>ctx context.Context</code>. 
+The <code>client.Client</code> struct returned by <code>client.NewEnvClient()</code> <em>should</em> implement the
+<code>ImageLister</code> interface. However, the <code>Context</code> interface that&#39;s being used as
+type in <code>Client.ImageList(...)</code> uses the Docker client library&#39;s vendored
+<code>Context</code>, which is imported from
+<code>$GOPATH/src/github.com/docker/docker/vendor/golang.org/x/net/context</code>.</p>
+
+<p><code>Context</code> in my program is being imported from
+<code>$GOPATH/src/golang.org/x/net/context</code>. In the Docker library it&#39;s being
+imported from the previously mentioned path. This causes the compiler to treat
+them as two different interfaces, with the error as a result.</p>
+
+<p>The thing about this that confuse(s/d) me, is that in Go all <a href="https://tour.golang.org/methods/10">interfaces are
+implemented implicitly</a>. So I thought: every object that implements
+Docker&#39;s vendored version of <code>Context</code>, also implements the local <code>Context</code>, so
+this should work.  I might be missing something here.. I&#39;ll need to explore this
+a bit further.</p>
+
+<p>In the end I had to properly vendor the Docker client library, causing both the
+(vendored) Docker client library&#39;s, and my own <code>golang.org/x/net/context</code>
+imports to be imported from
+<code>$GOPATH/src/github.com/boyvanduuren/octorunner/vendor/golang.org/x/net/context</code>,
+resulting in them being exactly the same interface.</p>
+
+<p><strong><em>TL;DR:</em></strong> When using library <code>L</code> that vendors other libraries, and you want
+to create a common interface that uses an interface from one of those vendored
+libraries, you&#39;ll likely run into the same problems as I did, and you&#39;ll have to
+vendor library <code>L</code> in your project.</p>
+
+    </section>
+</article>
+<footer id="post-meta" class="clearfix">
+    <a href="http://twitter.com/">
+        <img class="avatar" src="/assets/images/avatar.png">
+        <div>
+            <span class="dark">Boy van Duuren</span>
+            <span>Programming, automation, infrastructure.</span>
+        </div>
+    </a>
+
+    <section id="sharing">
+        <a class="twitter" href="https://twitter.com/intent/tweet?text=https://vanduuren.xyz/2017/golang-vendoring-interface-confusion/ - Golang: Vendoring and Interface Confusion by @"><span class="icon-twitter"> Tweet</span></a>
+
+<a class="facebook" href="#" onclick="
+    window.open(
+      'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),
+      'facebook-share-dialog',
+      'width=626,height=436');
+    return false;"><span class="icon-facebook-rect"> Share</span>
+</a>
+    </section>
+</footer>
+
+<!-- Disqus comments -->
+
+
+<!-- Archive post list -->
+
+
+
+
+
+  </section>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="/assets/js/main.js"></script>
+  <script src="/assets/js/highlight.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-78233041-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+</body>
+</html>
+
+
+

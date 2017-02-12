@@ -41,7 +41,7 @@
 
 <p>Anyway, some way into the book, section 2.6.2 to be precise, an example is given of a program that counts the population of an integer, meaning it returns the amount of \(1\)&#39;s in the binary representation of that integer. <br>
 Not intuitively getting how this program worked, it needed some extra attention from my side. Posting this because maybe, somewhere, sometime, someone has the same problem and needs some help.</p>
-<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// gopl.io/ch2/popcount</span>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="c1">// gopl.io/ch2/popcount</span>
 <span class="kn">package</span> <span class="nx">popcount</span>
 
 <span class="c1">// pc[i] is the population count of i.</span>
@@ -80,7 +80,7 @@ How does <code>init()</code> do that?</p>
 </ul>
 
 <p>So three steps of the second rule will result in:</p>
-<div class="highlight"><pre><code class="language-html" data-lang="html">0,    1
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span></span>0,    1
       10,                     11
       100,        101,        110,        111
       1000, 1001, 1010, 1011, 1100, 1101, 1110, 1111
@@ -104,7 +104,7 @@ This can be rewritten mathematically:</p>
 <p><br>
 Having created the lookup table we can now look at the second part, <code>PopCount(x uint64)</code>. <br>
 For every number that can be represented in a byte we know how many \(1\)&#39;s it contains. So we just lookup a number byte for byte and add the results of those lookups. Say we want to check the population count of the number \(51318=1100 1000 0111 0110b\), we call <code>PopCount(51318)</code>:</p>
-<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="c1">// called with x = 51318</span>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="c1">// called with x = 51318</span>
 <span class="kd">func</span> <span class="nx">PopCount</span><span class="p">(</span><span class="nx">x</span> <span class="kt">uint64</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
 <span class="c1">// x &gt;&gt; 0*8 shifts 0 places to the right, so we still have 0000 ... 1100 1000 0111 0110</span>
 <span class="c1">// byte(x&gt;&gt;(0*8)) takes the least significant byte of that number, resulting in 0111 0110b = 118</span>
@@ -141,7 +141,7 @@ When looking at this program we found that we can represent the initialization a
 </ul>
 
 <p>This implies we could also do a population count using this recursive function:</p>
-<div class="highlight"><pre><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nx">PopCount</span><span class="p">(</span><span class="nx">x</span> <span class="kt">uint64</span><span class="p">)</span> <span class="kt">uint64</span> <span class="p">{</span>
+<div class="highlight"><pre><code class="language-go" data-lang="go"><span></span><span class="kd">func</span> <span class="nx">PopCount</span><span class="p">(</span><span class="nx">x</span> <span class="kt">uint64</span><span class="p">)</span> <span class="kt">uint64</span> <span class="p">{</span>
     <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
         <span class="k">return</span> <span class="mi">0</span>
     <span class="p">}</span>

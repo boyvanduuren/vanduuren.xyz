@@ -7,7 +7,22 @@
     <atom:link href="https://vanduuren.xyz/feed.xml" rel="self" type="application/rss+xml" />
     
       <item>
-        <title>Serializing Java objects using Golang&#39;s gob encoding</title>
+        <title>Golang: Vendoring and Interface Confusion</title>
+        
+        
+          <description>&lt;p&gt;The last few days I have been working on a small tool that enables you to easily
+run tests against your code hosted on Github on your own machines.  The thing
+is, there are tons of tools and providers that allow you to do this, but they&amp;#39;ll
+start costing money as soon as you want to use them on private repositories.&lt;/p&gt;
+</description>
+        
+        <pubDate>Sun, 12 Feb 2017 16:05:16 +0100</pubDate>
+        <link>https://vanduuren.xyz/2017/golang-vendoring-interface-confusion/</link>
+        <guid isPermaLink="true">https://vanduuren.xyz/2017/golang-vendoring-interface-confusion/</guid>
+      </item>
+    
+      <item>
+        <title>Serializing Java objects using Golang's gob encoding</title>
         
         
           <description>&lt;p&gt;A while ago while working with Terraform, I started reading up on Go&amp;#39;s &lt;a href=&quot;https://golang.org/pkg/net/rpc/&quot;&gt;RPC&lt;/a&gt; library, and
@@ -39,7 +54,7 @@ EC2 regions.&lt;/p&gt;
         <title>Population count exercise in GOPL</title>
         
         
-          <description>&lt;script src=&#39;https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&#39;&gt;&lt;/script&gt;
+          <description>&lt;script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'&gt;&lt;/script&gt;
 </description>
         
         <pubDate>Sun, 22 May 2016 10:32:13 +0200</pubDate>

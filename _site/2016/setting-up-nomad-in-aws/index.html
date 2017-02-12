@@ -80,7 +80,7 @@ ID&#39;s for the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AM
 
 <p>We&#39;ll start by creating the elastic IP addresses, these are needed when we create the security groups.
 The <code>aws ec2 allocate-address</code> command will be of use here. One IP will be allocated per region.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>aws ec2 allocate-address <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ aws ec2 allocate-address <span class="se">\</span>
     --domain vpc <span class="se">\</span>
     --region eu-west-1
 
@@ -90,13 +90,13 @@ The <code>aws ec2 allocate-address</code> command will be of use here. One IP wi
               <span class="s2">&quot;AllocationId&quot;</span>: <span class="s2">&quot;eipalloc-64d5890a&quot;</span>
           <span class="o">}</span>
 
-<span class="nv">$ </span><span class="c"># we&#39;re interested in the AllocationId and</span>
-<span class="nv">$ </span><span class="c"># the PublicIp, so we&#39;ll save it in a variable</span>
-<span class="nv">$ ALLOCID_WEST</span><span class="o">=</span><span class="s2">&quot;eipalloc-64d5890a&quot;</span>
-<span class="nv">$ PUBLICIP_WEST</span><span class="o">=</span><span class="s2">&quot;203.0.113.10&quot;</span>
+$ <span class="c1"># we&#39;re interested in the AllocationId and</span>
+$ <span class="c1"># the PublicIp, so we&#39;ll save it in a variable</span>
+$ <span class="nv">ALLOCID_WEST</span><span class="o">=</span><span class="s2">&quot;eipalloc-64d5890a&quot;</span>
+$ <span class="nv">PUBLICIP_WEST</span><span class="o">=</span><span class="s2">&quot;203.0.113.10&quot;</span>
 
-<span class="nv">$ </span><span class="c"># we&#39;ll do the same for the second region</span>
-<span class="nv">$ </span>aws ec2 allocate-address <span class="se">\</span>
+$ <span class="c1"># we&#39;ll do the same for the second region</span>
+$ aws ec2 allocate-address <span class="se">\</span>
     --domain vpc <span class="se">\</span>
     --region eu-central-1
 
@@ -106,8 +106,8 @@ The <code>aws ec2 allocate-address</code> command will be of use here. One IP wi
               <span class="s2">&quot;AllocationId&quot;</span>: <span class="s2">&quot;eipalloc-1a90338f&quot;</span>
           <span class="o">}</span>
 
-<span class="nv">$ ALLOCID_CENTRAL</span><span class="o">=</span><span class="s2">&quot;eipalloc-1a90338f&quot;</span>
-<span class="nv">$ PUBLICIP_CENTRAL</span><span class="o">=</span><span class="s2">&quot;203.0.113.6&quot;</span>
+$ <span class="nv">ALLOCID_CENTRAL</span><span class="o">=</span><span class="s2">&quot;eipalloc-1a90338f&quot;</span>
+$ <span class="nv">PUBLICIP_CENTRAL</span><span class="o">=</span><span class="s2">&quot;203.0.113.6&quot;</span>
 </code></pre></div>
 <p>We now have all the information for the next step...</p>
 
@@ -119,66 +119,66 @@ On top of that, all traffic between the two elastic IP addresses will be allowed
 the nomad agents can talk to each other, and we can connect to our test jobs (which will be redis containers).</p>
 
 <p>The commands we&#39;ll be using are <code>aws ec2 create-security-group</code> and <code>aws ec2 authorize-security-group-ingress</code>.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="c"># First save our own public IP to a variable</span>
-<span class="nv">$ PUBLICIP_SELF</span><span class="o">=</span><span class="k">$(</span>curl https://dynamicdns.park-your-domain.com/getip<span class="k">)</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ <span class="c1"># First save our own public IP to a variable</span>
+$ <span class="nv">PUBLICIP_SELF</span><span class="o">=</span><span class="k">$(</span>curl https://dynamicdns.park-your-domain.com/getip<span class="k">)</span>
 
-<span class="nv">$ </span><span class="c"># Configure our first region</span>
-<span class="nv">$ </span>aws ec2 create-security-group <span class="se">\</span>
+$ <span class="c1"># Configure our first region</span>
+$ aws ec2 create-security-group <span class="se">\</span>
     --description <span class="s2">&quot;Nomad development security group&quot;</span> <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-west-1
 
-<span class="nv">$ </span>aws ec2 authorize-security-group-ingress <span class="se">\</span>
+$ aws ec2 authorize-security-group-ingress <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
     --protocol tcp <span class="se">\</span>
     --port <span class="m">22</span> <span class="se">\</span>
-    --cidr <span class="k">${</span><span class="nv">PUBLICIP_SELF</span><span class="k">}</span>/32
+    --cidr <span class="si">${</span><span class="nv">PUBLICIP_SELF</span><span class="si">}</span>/32
 
-<span class="nv">$ </span>aws ec2 authorize-security-group-ingress <span class="se">\</span>
+$ aws ec2 authorize-security-group-ingress <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
     --protocol all <span class="se">\</span>
-    --port 0-65535 <span class="se">\</span>
-    --cidr <span class="k">${</span><span class="nv">PUBLICIP_CENTRAL</span><span class="k">}</span>/32
+    --port <span class="m">0</span>-65535 <span class="se">\</span>
+    --cidr <span class="si">${</span><span class="nv">PUBLICIP_CENTRAL</span><span class="si">}</span>/32
 
-<span class="nv">$ </span><span class="c"># Configure our second region</span>
-<span class="nv">$ </span>aws ec2 create-security-group <span class="se">\</span>
+$ <span class="c1"># Configure our second region</span>
+$ aws ec2 create-security-group <span class="se">\</span>
     --description <span class="s2">&quot;Nomad development security group&quot;</span> <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-central-1
 
-<span class="nv">$ </span>aws ec2 authorize-security-group-ingress <span class="se">\</span>
+$ aws ec2 authorize-security-group-ingress <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
     --protocol tcp <span class="se">\</span>
     --port <span class="m">22</span> <span class="se">\</span>
-    --cidr <span class="k">${</span><span class="nv">PUBLICIP_SELF</span><span class="k">}</span>/32
+    --cidr <span class="si">${</span><span class="nv">PUBLICIP_SELF</span><span class="si">}</span>/32
 
-<span class="nv">$ </span>aws ec2 authorize-security-group-ingress <span class="se">\</span>
+$ aws ec2 authorize-security-group-ingress <span class="se">\</span>
     --group-name nomad-dev <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
     --protocol all <span class="se">\</span>
-    --port 0-65535 <span class="se">\</span>
-    --cidr <span class="k">${</span><span class="nv">PUBLICIP_WEST</span><span class="k">}</span>/32
+    --port <span class="m">0</span>-65535 <span class="se">\</span>
+    --cidr <span class="si">${</span><span class="nv">PUBLICIP_WEST</span><span class="si">}</span>/32
 </code></pre></div>
 <h2>creating our authentication keys</h2>
 
 <p>To be able to login to our instances, we&#39;re going to need authentication keys.
 One for each region.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>aws ec2 create-key-pair <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ aws ec2 create-key-pair <span class="se">\</span>
     --key-name nomad-west-key <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
     --query <span class="s1">&#39;KeyMaterial&#39;</span> <span class="se">\</span>
     --output text &gt; ~/.aws/nomad-west-key.pem
 
-<span class="nv">$ </span>aws ec2 create-key-pair <span class="se">\</span>
+$ aws ec2 create-key-pair <span class="se">\</span>
     --key-name nomad-central-key <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
     --query <span class="s1">&#39;KeyMaterial&#39;</span> <span class="se">\</span>
     --output text &gt; ~/.aws/nomad-central-key.pem
 
-<span class="nv">$ </span>chmod <span class="m">0400</span> ~/.aws/nomad-<span class="o">{</span>west,central<span class="o">}</span>-key.pem
+$ chmod <span class="m">0400</span> ~/.aws/nomad-<span class="o">{</span>west,central<span class="o">}</span>-key.pem
 </code></pre></div>
 <h2>creating the instances</h2>
 
@@ -186,7 +186,7 @@ One for each region.</p>
 First, we need the AMI id&#39;s of the images we want to use. I&#39;m going to use
 the Amazon Linux AMI provided by Amazon, but of course you can choose whatever
 you like. As long as Nomad can run on it!</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>aws ec2 describe-images <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ aws ec2 describe-images <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
     --owners amazon <span class="se">\</span>
     --filters <span class="s2">&quot;Name=name,Values=amzn-ami-hvm-2016.03.1.x86_64-gp2&quot;</span> <span class="se">\</span>
@@ -194,9 +194,9 @@ you like. As long as Nomad can run on it!</p>
 
 <span class="s2">&quot;ami-79aa230a&quot;</span>
 
-<span class="nv">$ AMI_WEST</span><span class="o">=</span><span class="s2">&quot;ami-79aa230a&quot;</span>
+$ <span class="nv">AMI_WEST</span><span class="o">=</span><span class="s2">&quot;ami-79aa230a&quot;</span>
 
-<span class="nv">$ </span>aws ec2 describe-images <span class="se">\</span>
+$ aws ec2 describe-images <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
     --owners amazon <span class="se">\</span>
     --filters <span class="s2">&quot;Name=name,Values=amzn-ami-hvm-2016.03.1.x86_64-gp2&quot;</span> <span class="se">\</span>
@@ -204,12 +204,12 @@ you like. As long as Nomad can run on it!</p>
 
 <span class="s2">&quot;ami-d8c123b7&quot;</span>
 
-<span class="nv">$ AMI_CENTRAL</span><span class="o">=</span><span class="s2">&quot;ami-d8c123b7&quot;</span>
+$ <span class="nv">AMI_CENTRAL</span><span class="o">=</span><span class="s2">&quot;ami-d8c123b7&quot;</span>
 </code></pre></div>
 <p>And now we&#39;re finally all set.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>aws ec2 run-instances <span class="se">\</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ aws ec2 run-instances <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
-    --image-id <span class="k">${</span><span class="nv">AMI_WEST</span><span class="k">}</span> <span class="se">\</span>
+    --image-id <span class="si">${</span><span class="nv">AMI_WEST</span><span class="si">}</span> <span class="se">\</span>
     --security-groups nomad-dev <span class="se">\</span>
     --count <span class="m">1</span> <span class="se">\</span>
     --instance-type t2.micro <span class="se">\</span>
@@ -218,11 +218,11 @@ you like. As long as Nomad can run on it!</p>
 
 <span class="s2">&quot;i-ec3e1e2k&quot;</span>
 
-<span class="nv">$ INSTANCE_WEST</span><span class="o">=</span><span class="s2">&quot;i-ec3e1e2k&quot;</span>
+$ <span class="nv">INSTANCE_WEST</span><span class="o">=</span><span class="s2">&quot;i-ec3e1e2k&quot;</span>
 
-<span class="nv">$ </span>aws ec2 run-instances <span class="se">\</span>
+$ aws ec2 run-instances <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
-    --image-id <span class="k">${</span><span class="nv">AMI_CENTRAL</span><span class="k">}</span> <span class="se">\</span>
+    --image-id <span class="si">${</span><span class="nv">AMI_CENTRAL</span><span class="si">}</span> <span class="se">\</span>
     --security-groups nomad-dev <span class="se">\</span>
     --count <span class="m">1</span> <span class="se">\</span>
     --instance-type t2.micro <span class="se">\</span>
@@ -231,30 +231,30 @@ you like. As long as Nomad can run on it!</p>
 
 <span class="s2">&quot;i-a2fc9213&quot;</span>
 
-<span class="nv">$ INSTANCE_CENTRAL</span><span class="o">=</span><span class="s2">&quot;i-a2fc9213&quot;</span>
+$ <span class="nv">INSTANCE_CENTRAL</span><span class="o">=</span><span class="s2">&quot;i-a2fc9213&quot;</span>
 
 
-<span class="nv">$ </span><span class="c"># Note that you might have to wait a bit</span>
-<span class="nv">$ </span><span class="c"># before executing the next two steps</span>
+$ <span class="c1"># Note that you might have to wait a bit</span>
+$ <span class="c1"># before executing the next two steps</span>
 
-<span class="nv">$ </span>aws ec2 associate-address <span class="se">\</span>
+$ aws ec2 associate-address <span class="se">\</span>
     --region eu-west-1 <span class="se">\</span>
-    --instance-id <span class="k">${</span><span class="nv">INSTANCE_WEST</span><span class="k">}</span> <span class="se">\</span>
-    --allocation-id <span class="k">${</span><span class="nv">ALLOCID_WEST</span><span class="k">}</span>
+    --instance-id <span class="si">${</span><span class="nv">INSTANCE_WEST</span><span class="si">}</span> <span class="se">\</span>
+    --allocation-id <span class="si">${</span><span class="nv">ALLOCID_WEST</span><span class="si">}</span>
 
-<span class="nv">$ </span>aws ec2 associate-address <span class="se">\</span>
+$ aws ec2 associate-address <span class="se">\</span>
     --region eu-central-1 <span class="se">\</span>
-    --instance-id <span class="k">${</span><span class="nv">INSTANCE_CENTRAL</span><span class="k">}</span> <span class="se">\</span>
-    --allocation-id <span class="k">${</span><span class="nv">ALLOCID_CENTRAL</span><span class="k">}</span>
+    --instance-id <span class="si">${</span><span class="nv">INSTANCE_CENTRAL</span><span class="si">}</span> <span class="se">\</span>
+    --allocation-id <span class="si">${</span><span class="nv">ALLOCID_CENTRAL</span><span class="si">}</span>
 </code></pre></div>
 <p>And we&#39;re up! Test if you can connect to the instances.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>ssh -i ~/.aws/nomad-west-key.pem <span class="se">\</span>
-    ec2-user@<span class="k">${</span><span class="nv">PUBLICIP_WEST</span><span class="k">}</span> whoami
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ ssh -i ~/.aws/nomad-west-key.pem <span class="se">\</span>
+    ec2-user@<span class="si">${</span><span class="nv">PUBLICIP_WEST</span><span class="si">}</span> whoami
 
 ec2-user
 
-<span class="nv">$ </span>ssh -i ~/.aws/nomad-central-key.pem <span class="se">\</span>
-    ec2-user@<span class="k">${</span><span class="nv">PUBLICIP_central</span><span class="k">}</span> whoami
+$ ssh -i ~/.aws/nomad-central-key.pem <span class="se">\</span>
+    ec2-user@<span class="si">${</span><span class="nv">PUBLICIP_central</span><span class="si">}</span> whoami
 
 ec2-user
 </code></pre></div>
@@ -267,13 +267,13 @@ the official Getting Started guide. We won&#39;t use Consul or anything like tha
 <h2>installing the binary</h2>
 
 <p>We start by logging into one of our instances and then installing the Nomad binary, and docker.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>ssh -i ~/.aws/nomad-west-key.pem <span class="se">\</span>
-    ec2-user@<span class="k">${</span><span class="nv">PUBLICIP_WEST</span><span class="k">}</span>
-<span class="nv">$ </span>sudo yum install -y unzip docker
-<span class="nv">$ </span>curl -O https://releases.hashicorp.com/nomad/0.3.2/nomad_0.3.2_linux_amd64.zip
-<span class="nv">$ </span>sudo unzip nomad_0.3.2_linux_amd64.zip -d /usr/local/bin/
-<span class="nv">$ </span>sudo chkconfig docker on
-<span class="nv">$ </span>sudo service docker start
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ ssh -i ~/.aws/nomad-west-key.pem <span class="se">\</span>
+    ec2-user@<span class="si">${</span><span class="nv">PUBLICIP_WEST</span><span class="si">}</span>
+$ sudo yum install -y unzip docker
+$ curl -O https://releases.hashicorp.com/nomad/0.3.2/nomad_0.3.2_linux_amd64.zip
+$ sudo unzip nomad_0.3.2_linux_amd64.zip -d /usr/local/bin/
+$ sudo chkconfig docker on
+$ sudo service docker start
 </code></pre></div>
 <p>Repeat this for the other instance.</p>
 
@@ -281,28 +281,28 @@ the official Getting Started guide. We won&#39;t use Consul or anything like tha
 
 <p>Now place the following text in a file named <code>server.conf</code> on both instances.
 Take care to use the IP addresses in the <code>advertise</code> block.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Increase log verbosity</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span><span class="c1"># Increase log verbosity</span>
 <span class="nv">log_level</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span>
 
-<span class="c"># Bind to all interfaces</span>
+<span class="c1"># Bind to all interfaces</span>
 <span class="nv">bind_addr</span> <span class="o">=</span> <span class="s2">&quot;0.0.0.0&quot;</span>
 
-<span class="c"># Setup data dir</span>
+<span class="c1"># Setup data dir</span>
 <span class="nv">data_dir</span> <span class="o">=</span> <span class="s2">&quot;/tmp/server&quot;</span>
 
-<span class="c"># Change the region to the proper aws region</span>
+<span class="c1"># Change the region to the proper aws region</span>
 <span class="nv">region</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span>
 <span class="nv">datacenter</span> <span class="o">=</span> <span class="s2">&quot;aws-ec2&quot;</span>
 
-<span class="c"># Enable the server</span>
+<span class="c1"># Enable the server</span>
 server <span class="o">{</span>
     <span class="nv">enabled</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nb">    </span><span class="nv">bootstrap_expect</span> <span class="o">=</span> 2
+    <span class="nv">bootstrap_expect</span> <span class="o">=</span> <span class="m">2</span>
 <span class="o">}</span>
 
 advertise <span class="o">{</span>
-    <span class="c"># make sure to replace the IP with the proper id</span>
-    <span class="c"># for this instance!</span>
+    <span class="c1"># make sure to replace the IP with the proper id</span>
+    <span class="c1"># for this instance!</span>
     <span class="nv">http</span> <span class="o">=</span> <span class="s2">&quot;52.50.233.53:4646&quot;</span>
     <span class="nv">rpc</span> <span class="o">=</span> <span class="s2">&quot;52.50.233.53:4647&quot;</span>
     <span class="nv">serf</span> <span class="o">=</span> <span class="s2">&quot;52.50.233.53:4648&quot;</span>
@@ -311,66 +311,66 @@ advertise <span class="o">{</span>
 <p>Run nomad on both instances. We&#39;re going to be dirty and redirect
 <code>STDOUT</code> and <code>STDERR</code> to a log file and just background the process.
 Of course, normally you&#39;d make a proper unit file for your nomad server.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sudo nomad agent -config server.conf <span class="p">&amp;</span>&gt;/tmp/nomad_server.log <span class="p">&amp;</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ sudo nomad agent -config server.conf <span class="p">&amp;</span>&gt;/tmp/nomad_server.log <span class="p">&amp;</span>
 </code></pre></div>
 <p>We now have two nomad servers that don&#39;t know of each others existence.
 To create the cluster, we&#39;re going to join one of the servers to the other.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nomad server-join 52.50.233.53
-<span class="nv">$ </span>nomad server-members
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ nomad server-join <span class="m">52</span>.50.233.53
+$ nomad server-members
 
 Name                     Address       Port  Status  Leader  Protocol  Build  Datacenter  Region
-ip-172-31-19-237.global  52.29.92.34   <span class="m">4648</span>  alive   <span class="nb">false   </span><span class="m">2</span>         0.3.2  dc1         global
-ip-172-31-46-199.global  52.50.233.53  <span class="m">4648</span>  alive   <span class="nb">true    </span><span class="m">2</span>         0.3.2  dc1         global
+ip-172-31-19-237.global  <span class="m">52</span>.29.92.34   <span class="m">4648</span>  alive   <span class="nb">false</span>   <span class="m">2</span>         <span class="m">0</span>.3.2  dc1         global
+ip-172-31-46-199.global  <span class="m">52</span>.50.233.53  <span class="m">4648</span>  alive   <span class="nb">true</span>    <span class="m">2</span>         <span class="m">0</span>.3.2  dc1         global
 </code></pre></div>
 <h2>creating client configuration</h2>
 
 <p>We&#39;re almost there. Let&#39;s create four client configs, and start the agents.
 Place the following file in <code>client1.conf</code>.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Increase log verbosity</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span><span class="c1"># Increase log verbosity</span>
 <span class="nv">log_level</span> <span class="o">=</span> <span class="s2">&quot;DEBUG&quot;</span>
 
-<span class="c"># Setup data dir</span>
+<span class="c1"># Setup data dir</span>
 <span class="nv">data_dir</span> <span class="o">=</span> <span class="s2">&quot;/tmp/client1&quot;</span>
 
 <span class="nv">region</span> <span class="o">=</span> <span class="s2">&quot;global&quot;</span>
 <span class="nv">datacenter</span> <span class="o">=</span> <span class="s2">&quot;aws-ec2&quot;</span>
 
-<span class="c"># Enable the client</span>
+<span class="c1"># Enable the client</span>
 client <span class="o">{</span>
     <span class="nv">enabled</span> <span class="o">=</span> <span class="nb">true</span>
-<span class="nb">    </span><span class="nv">servers</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;127.0.0.1:4647&quot;</span><span class="o">]</span>
+    <span class="nv">servers</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&quot;127.0.0.1:4647&quot;</span><span class="o">]</span>
 <span class="o">}</span>
 
-<span class="c"># Modify our port to avoid a collision with server1</span>
+<span class="c1"># Modify our port to avoid a collision with server1</span>
 ports <span class="o">{</span>
-    <span class="nv">http</span> <span class="o">=</span> 5656
+    <span class="nv">http</span> <span class="o">=</span> <span class="m">5656</span>
 <span class="o">}</span>
 </code></pre></div>
 <p>Copy that file to <code>client2.conf</code> and change <code>data_dir = &quot;/tmp/client2&quot;</code> and <code>http = 5657</code>.
 Do the same for the other instance.</p>
 
 <p>We can now start the clients. On both instances, run the following commands:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>sudo nomad agent -config client1.conf <span class="p">&amp;</span>&gt;/tmp/nomad_client1.log<span class="p">&amp;</span>
-<span class="nv">$ </span>sudo nomad agent -config client2.conf <span class="p">&amp;</span>&gt;/tmp/nomad_client2.log<span class="p">&amp;</span>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ sudo nomad agent -config client1.conf <span class="p">&amp;</span>&gt;/tmp/nomad_client1.log<span class="p">&amp;</span>
+$ sudo nomad agent -config client2.conf <span class="p">&amp;</span>&gt;/tmp/nomad_client2.log<span class="p">&amp;</span>
 </code></pre></div>
 <p>And a cluster with some servers and clients has been born! :-)</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nomad node-status
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ nomad node-status
 ID        DC       Name              Class   Drain  Status
-ef11478f  aws-ec2  ip-172-31-19-237  &lt;none&gt;  <span class="nb">false  </span>ready
-14ed37a9  aws-ec2  ip-172-31-19-237  &lt;none&gt;  <span class="nb">false  </span>ready
-4b289230  aws-ec2  ip-172-31-46-199  &lt;none&gt;  <span class="nb">false  </span>ready
-9db8d155  aws-ec2  ip-172-31-46-199  &lt;none&gt;  <span class="nb">false  </span>ready
+ef11478f  aws-ec2  ip-172-31-19-237  &lt;none&gt;  <span class="nb">false</span>  ready
+14ed37a9  aws-ec2  ip-172-31-19-237  &lt;none&gt;  <span class="nb">false</span>  ready
+4b289230  aws-ec2  ip-172-31-46-199  &lt;none&gt;  <span class="nb">false</span>  ready
+9db8d155  aws-ec2  ip-172-31-46-199  &lt;none&gt;  <span class="nb">false</span>  ready
 </code></pre></div>
 <h2>scheduling some jobs</h2>
 
 <p>Let&#39;s create a simple job and deploy it on all our clients.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nomad init
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ nomad init
 
 Example job file written to example.nomad
 
-<span class="nv">$ </span>sed -i <span class="s1">&#39;s/dc1/aws-ec2/g&#39;</span> example.nomad
-<span class="nv">$ </span>sed -i <span class="s1">&#39;s/# count = 1/count = 4/&#39;</span> example.nomad
-<span class="nv">$ </span>nomad run example.nomad
+$ sed -i <span class="s1">&#39;s/dc1/aws-ec2/g&#39;</span> example.nomad
+$ sed -i <span class="s1">&#39;s/# count = 1/count = 4/&#39;</span> example.nomad
+$ nomad run example.nomad
 
 <span class="o">==</span>&gt; Monitoring evaluation <span class="s2">&quot;4144a94f&quot;</span>
     Evaluation triggered by job <span class="s2">&quot;example&quot;</span>
@@ -383,7 +383,7 @@ Example job file written to example.nomad
 </code></pre></div>
 <p>And we just deployed four redis instances, one on each nomad client!
 Let&#39;s see if we can connect to a redis instance from one node to the other.</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nc 52.51.141.75 32908
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>$ nc <span class="m">52</span>.51.141.75 <span class="m">32908</span>
 ping
 +PONG
 </code></pre></div>

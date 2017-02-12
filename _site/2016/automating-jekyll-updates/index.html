@@ -57,14 +57,14 @@ nginx, and check for updates every 5 minutes.</li>
 </ul>
 
 <p>If you want to try it yourself:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash">docker pull boyvanduuren/jekyll-arm
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span>docker pull boyvanduuren/jekyll-arm
 docker run -d   <span class="se">\</span>
     -e <span class="nv">GIT_URL</span><span class="o">=</span>https://github.com/boyvanduuren/vanduuren.xyz.git <span class="se">\</span>
     -e <span class="nv">GIT_BRANCH</span><span class="o">=</span>live <span class="se">\</span>
     -e <span class="nv">DOMAIN</span><span class="o">=</span>vanduuren.xyz <span class="se">\</span>
     -v /etc/ssl/private/:/etc/ssl/private/ <span class="se">\</span>
-    -p 80:80 <span class="se">\</span>
-    -p 443:443 <span class="se">\</span>
+    -p <span class="m">80</span>:80 <span class="se">\</span>
+    -p <span class="m">443</span>:443 <span class="se">\</span>
     boyvanduuren/docker-jekyll
 </code></pre></div>
 <p>Replace the environment variables by your own, of course.</p>
