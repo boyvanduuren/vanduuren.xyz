@@ -76,7 +76,7 @@ How does <code>init()</code> do that?</p>
 
 <ul>
 <li>\(\{0, 1\} \subset B\)</li>
-<li>\(x \in B \land x \not= 0 \rightarrow x0 \in B, x1 \in B\)</li>
+<li>\(x \in B \land x \not= 0 \rightarrow x||0 \in B, x||1 \in B\)</li>
 </ul>
 
 <p>So three steps of the second rule will result in:</p>
@@ -145,10 +145,10 @@ When looking at this program we found that we can represent the initialization a
     <span class="k">if</span> <span class="nx">x</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
         <span class="k">return</span> <span class="mi">0</span>
     <span class="p">}</span>
-    <span class="k">return</span> <span class="nx">foo</span><span class="p">(</span><span class="nx">x</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">x</span><span class="o">%</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="nx">PopCount</span><span class="p">(</span><span class="nx">x</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="nx">x</span><span class="o">%</span><span class="mi">2</span>
 <span class="p">}</span>
 </code></pre></div>
-<p>Which of course isn&#39;t as fast as the lookup method if you have to count more than one number, but it proves all of the above.</p>
+<p>Which of course isn&#39;t as fast as the lookup method if you have to count more than one number, but it demonstrates all of the above.</p>
 
     </section>
 </article>

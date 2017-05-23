@@ -46,7 +46,7 @@ How does `init()` do that?
 The initialization works around the principle that we can create all the binary numbers using the following rules:
 
 * \\(\\{0, 1\\} \subset B\\)
-* \\(x \in B \land x \not= 0 \rightarrow x0 \in B, x1 \in B\\)
+* \\(x \in B \land x \not= 0 \rightarrow x\|\|0 \in B, x\|\|1 \in B\\)
 
 So three steps of the second rule will result in:
 
@@ -88,7 +88,7 @@ func PopCount(x uint64) int {
 // byte(x>>(1*8)) again takes the LSB, resulting in 1100 1000b = 200
 // pc[200] = 3
 		pc[byte(x>>(1*8))] +        // = 3
-        
+
 // x >> 2*8 = 0000 ... 0000
 // byte(x>>(2*8)) = 0000b = 0
 		pc[byte(x>>(2*8))] +        // = 0
@@ -120,11 +120,11 @@ func PopCount(x uint64) uint64 {
 	if x == 0 {
 		return 0
 	}
-	return foo(x/2) + x%2
+	return PopCount(x/2) + x%2
 }
 ```
 
-Which of course isn't as fast as the lookup method if you have to count more than one number, but it proves all of the above.
+Which of course isn't as fast as the lookup method if you have to count more than one number, but it demonstrates all of the above.
 
 [1]: http://www.gopl.io/
 [2]: http://www.amazon.com/Programming-Language-Brian-W-Kernighan/dp/0131103628
