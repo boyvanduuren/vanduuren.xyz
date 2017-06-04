@@ -8,7 +8,7 @@ So, short bio. I'm Boy van Duuren from [The Hague][the_hague] in the Netherlands
 
 Currently a bachelor student at the Open University which allows me to study next to my full-time job at [RAAF Technology][raaf] as a developer/{linux,infra}-consultant.
 
-Want to know more? Check out my [curriculum vitae][cv_en], or visit my [Github][github] or [LinkedIn][linkedin].
+Want to know more? Check out my curriculum vitae ([English][cv_en] or [Dutch][cv_nl]), or visit my [Github][github] or [LinkedIn][linkedin].
 
 {% include footer.html %}
 
@@ -18,3 +18,4 @@ Want to know more? Check out my [curriculum vitae][cv_en], or visit my [Github][
 [github]:     https://github.com/boyvanduuren
 [linkedin]:   https://nl.linkedin.com/in/boy-van-duuren-31905687
 [cv_en]:      /assets/documents/cv-en-bc_van_duuren.pdf
+[cv_nl]:      /assets/documents/cv-nl-bc_van_duuren.pdf
